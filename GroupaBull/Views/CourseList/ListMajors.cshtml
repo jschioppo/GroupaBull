@@ -1,0 +1,118 @@
+﻿@model IEnumerable<GroupaBull.Models.Major>
+
+@{
+    ViewBag.Title = "Courses";
+}
+
+
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Some text in the Modal..</p>
+    </div>
+
+</div>
+
+<div class="white-background">
+    <h2>ListMajors</h2>
+
+    <p>
+        Don't see your class or major? Add a class <a href="javascript:AddClass()">here</a> or major <a href="javascript:AddMajor()">here</a>.
+    </p>
+    @*<table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+
+    </table>*@
+    <div id="accordion">
+        @foreach (var item in Model)
+        {
+            <h3 class="accordion-header">
+                @Html.DisplayFor(modelItem => item.Name)
+            </h3>
+            <div>
+                @foreach (var course in item.Courses)
+                {
+                    <div class="accordion-item">
+                        @Html.DisplayFor(modelItem => course.Title) -
+                        @Html.DisplayFor(modelItem => course.Subject) @Html.DisplayFor(modelItem => course.CourseNumber) -
+                        Sect. @Html.DisplayFor(modelItem => course.SectionNumber) | 
+                        @Html.DisplayFor(modelItem => course.Instructor) - @Html.DisplayFor(modelItem => course.Semester) 
+                        @Html.DisplayFor(modelItem => course.Year) |  
+                        @Html.DisplayFor(modelItem => course.Day)  
+                        @Html.DisplayFor(modelItem => course.StartHour):@Html.DisplayFor(modelItem => course.StartMinute) @Html.DisplayFor(modelItem => course.AMPM) - 
+                        @Html.DisplayFor(modelItem => course.EndHour):@Html.DisplayFor(modelItem => course.EndMinute) @Html.DisplayFor(modelItem => course.AMPM) | 
+                        @Html.DisplayFor(modelItem => course.Members) Members
+                        <button class="btn btn-green" id="btnJoin" onclick="JoinGroup('@course.Title')">Join</button>
+                        <div style="margin-top: 5px;">
+                            
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+    </div>
+    
+</div>
+
+
+@section scripts{
+    <script>
+        var modal;
+        var btn;
+        var span;
+
+        $(document).on('ready', function () {
+            $("#accordion").accordion({
+                active: false,
+                collapsible: true
+            });
+
+            modal = document.getElementById('myModal');
+            btn = document.getElementById("myBtn");
+            span = document.getElementsByClassName("close")[0];
+        });
+
+        function AddClass() {
+            modal.style.display = "block";
+        }
+
+        function AddMajor() {
+            alert("Major");
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            closeModal();
+        }
+
+        function JoinGroup(name) {
+            alert(name);
+        }
+    </script>
+}
+

@@ -1,0 +1,131 @@
+﻿/*Background pattern from SubtlePatterns.com*/
+
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    background-image: url("../Content/BackgroundImages/footer_lodyas.png");
+    background-repeat: repeat;
+    background-color: #cccccc;
+    background-size: 300px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    background: white;
+    border: 1px solid #d4d6d8;
+    box-shadow: -1px 1px #d4d6d8, -2px 2px #d4d6d8, -3px 3px #d4d6d8, -4px 4px #d4d6d8, -5px 5px #d4d6d8;
+    height: 100%;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+.filled-background {
+    background: white;
+    margin: auto;
+}
+
+.accordion-header {
+    background-color: #CFC493;
+    padding: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #006747;
+    margin: auto;
+    box-shadow: -1px 1px #d8cea0, -2px 2px #d8cea0, -3px 3px #d8cea0, -4px 4px #d8cea0, -5px 5px #d8cea0;
+}
+
+.accordion-item {
+    background-color: #CFC493;
+    color: #006747;
+    padding: 8px;
+    margin-bottom: 12px;
+    box-shadow: -1px 1px #d8cea0, -2px 2px #d8cea0, -3px 3px #d8cea0, -4px 4px #d8cea0, -5px 5px #d8cea0;
+    font-weight: bold;
+    font-size: 14px;
+    height: 45px;
+}
+
+.btn-green {
+    background-color: #006747;
+    color: #CFC493;
+    border-color: #006747;
+    font-weight: bold;
+    float: left;
+    margin-right: 15px;
+}
+
+
+.btn-green:hover,
+.btn-green:focus,
+.btn-green:active,
+.btn-green.active,
+.open .dropdown-toggle.btn-green {
+    color: #333333;
+    background-color: #CFC493;
+    border-color: black;
+}
+
+.btn-green:active,
+.btn-green.active,
+.open .dropdown-toggle.btn-green {
+    background-image: none;
+}
+
+/* Modal Header */
+.modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 2px 16px;
+}
+
+/* Modal Footer */
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
