@@ -152,17 +152,28 @@ namespace GroupaBull.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, DisplayName = model.DisplayName };
+
+                //Custom Code - Checks in my user database if a user already exists, if so initialize Viewbag.Flag and return to view.
+                CourseDBHandler handler = new CourseDBHandler();
+                bool unique = handler.VerifyUniqueStudent(model.DisplayName);
+                if (!unique)
+                {
+                    ModelState.AddModelError("", "Display Name is already taken.");
+                    return View(model);
+                }
+                //End custom code
+                
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+                    handler.AddStudent(model.DisplayName);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -439,7 +450,12 @@ namespace GroupaBull.Controllers
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                if (!error.StartsWith("Name"))
+                {
+                    //This is to prevent Identity from throwing an error that both Name and Email are taken without creating a custom user handler
+                    ModelState.AddModelError("", error);
+                }
+                
             }
         }
 

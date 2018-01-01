@@ -7,8 +7,7 @@ namespace GroupaBull.Models
 {
     public class Student
     {
-        public int ID { get; set; }
+        public int StudentId { get; set; }
         public string DisplayName { get; set; }
-        public virtual ICollection<GroupEntry> Groups { get; set; }
     }
 }
