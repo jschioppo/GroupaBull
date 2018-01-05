@@ -4,22 +4,11 @@
     ViewBag.Title = "Courses";
 }
 
-
-<div id="myModal" class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <p>Some text in the Modal..</p>
-    </div>
-
-</div>
-
 <div class="white-background">
-    <h2>ListMajors</h2>
+    <h2>Courses</h2>
 
     <p>
-        Don't see your class or major? Add a class <a href="javascript:AddClass()">here</a> or major <a href="javascript:AddMajor()">here</a>.
+        <strong>Don't see your class or major? Add it @Html.ActionLink("here", "Index", "NewCourse", null, null)</strong>
     </p>
     <div id="accordion">
         @foreach (var item in Model)
@@ -30,7 +19,7 @@
             <div>
                 @foreach (var course in item.CourseList)
                 {
-                    <div class="accordion-item">
+                    <div class="accordion-item" onclick="JoinGroup('@course.CourseId')">
                         @Html.DisplayFor(modelItem => course.Title) -
                         @Html.DisplayFor(modelItem => course.CourseSubject) @Html.DisplayFor(modelItem => course.CRN) -
                         Sect. @Html.DisplayFor(modelItem => course.SectionNumber) | 
@@ -40,7 +29,6 @@
                         @Html.DisplayFor(modelItem => course.StartHour):@Html.DisplayFor(modelItem => course.StartMinute) @Html.DisplayFor(modelItem => course.AMPM) - 
                         @Html.DisplayFor(modelItem => course.EndHour):@Html.DisplayFor(modelItem => course.EndMinute) @Html.DisplayFor(modelItem => course.AMPM) | 
                         @Html.DisplayFor(modelItem => course.Members) Members
-                        <button class="btn btn-green" id="btnJoin" onclick="JoinGroup('@course.CourseId')">Join</button>
                         <div style="margin-top: 5px;">
                             
                         </div>
@@ -56,39 +44,34 @@
 
 @section scripts{
     <script>
-        var modal;
-        var btn;
-        var span;
 
         $(document).on('ready', function () {
             $("#accordion").accordion({
                 active: false,
                 collapsible: true
             });
-
-            modal = document.getElementById('myModal');
-            btn = document.getElementById("myBtn");
-            span = document.getElementsByClassName("close")[0];
         });
 
         function AddClass() {
-            modal.style.display = "block";
+            courseModal.style.display = "block";
         }
 
         function AddMajor() {
-            alert("Major");
+            majorModal.style.display = "block";
         }
 
         function closeModal() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function (event) {
-            closeModal();
+            courseModal.style.display = "none";
+            majorModal.style.display = "none";
         }
 
         function JoinGroup(name) {
             alert(name);
+        }
+
+        function SubmitMajor() {
+            var majorName = $('#NewMajor').val();
+            
         }
     </script>
 }

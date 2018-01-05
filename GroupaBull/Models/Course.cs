@@ -27,6 +27,7 @@ namespace GroupaBull.Models
         public string AMPM { get; set; }
         public int Members { get; set; }
         public bool Online { get; set; }
+        public string Campus { get; set; }
         public string CreatorDisplayName { get; set; }
     }
 }

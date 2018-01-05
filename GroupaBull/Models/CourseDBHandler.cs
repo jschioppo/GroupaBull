@@ -38,14 +38,21 @@ namespace GroupaBull.Models
             con.Open();
             var unique = (int)cmd.ExecuteScalar();
 
-            if(unique >= 1)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return (unique >= 1 ? false : true);
+        }
+
+        public bool VerifyUniqueMajor(string majorName)
+        {
+            StartConnection();
+            SqlCommand cmd = new SqlCommand("VerifyUniqueMajor", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@MajorName", majorName);
+
+            con.Open();
+            var unique = (int)cmd.ExecuteScalar();
+
+            return (unique >= 1 ? false : true);
         }
 
         public bool AddStudent(string displayName) {
@@ -59,25 +66,52 @@ namespace GroupaBull.Models
             int i = cmd.ExecuteNonQuery();
             con.Close();
 
-            if(i >= 1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (i >= 1 ? true : false);
         }
 
-        public bool AddMajor(Major maj)
+        public bool AddMajor(string majorName, string displayName)
         {
             StartConnection();
             SqlCommand cmd = new SqlCommand("AddNewMajor", con);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@MajorName", maj.MajorName);
-            cmd.Parameters.AddWithValue("@Courses", maj.CourseList);
-            return true;
+            cmd.Parameters.AddWithValue("@MajorName", majorName);
+            cmd.Parameters.AddWithValue("@Courses", null);
+            cmd.Parameters.AddWithValue("@CreatorDisplayName", displayName);
+
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+
+            return (i >= 1 ? true : false);
+        }
+
+        public List<Major> GetAllMajors()
+        {
+            StartConnection();
+            List<Major> majors = new List<Major>();
+
+            SqlCommand cmd = new SqlCommand("GetAllMajors", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter sd = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+
+            foreach(DataRow dr in dt.Rows)
+            {
+                majors.Add(
+                    new Major
+                    {
+                        MajorId = Convert.ToInt32(dr["MajorId"]),
+                        MajorName = Convert.ToString(dr["MajorName"])
+                    });
+            }
+
+            return majors;
+
         }
 
         

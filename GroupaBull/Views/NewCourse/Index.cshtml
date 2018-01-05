@@ -1,0 +1,166 @@
+﻿@model IEnumerable<GroupaBull.Models.Major>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="green-header">Add a Course</h2>
+<div class="row entry-row">
+    <div class="col-md-3">
+        <div class="green-text">Select a major: *</div>
+        <select style="width: 100%" class="text-input" id="selectedMajor">
+            <option value=""></option>
+            @foreach (var item in Model)
+            {
+                <option value="@item.MajorId">@item.MajorName</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Or add your major if doesn't appear:</div>
+        <input type="text" class="text-input" id="newMajor" />
+    </div>
+</div>
+
+<div class="row entry-row">
+    
+</div>
+
+<div class="row entry-row">
+    <div class="col-md-3">
+        <div class="green-text">Title: *</div>
+        <input type="text" class="text-input" id="titleInput" />
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Subject: *</div>
+        <input type="text" class="text-input" placeholder="Ex: COP" id="subjectInput"/>
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Number: *</div>
+        <input type="text" class="text-input" placeholder="Ex: 4200" id="numberInput"/>
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">CRN: *</div>
+        <input type="text" class="text-input" placeholder="Ex: 45122" id="crnInput" />
+    </div>
+</div>
+
+<div class="row entry-row">
+    <div class="col-md-3">
+        <div class="green-text">Instructor: *</div>
+        <input type="text" class="text-input" id="instructorInput" />
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Semester: *</div>
+        <select class="text-input" id="semesterInput">
+            <option value="Fall">Fall</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Year: *</div>
+        <input type="text" class="text-input" id="yearInput" placeholder="YYYY" />
+    </div>
+    <div class="col-md-3" style="margin-top: 25px;">
+        <div class="green-text">
+            <span style="margin-right: 5px">Online?:</span>
+            <input type="checkbox" id="onlineInput" />
+        </div>
+    </div>
+</div>
+
+<div class="row entry-row">
+    <div class="col-md-3">
+        <div class="green-text">Days:</div>
+        <div class="row">
+            <div class="col-md-2">
+                <p class="green-text">Mon: </p>
+                <input type="checkbox" id="monCheck" style="margin-left: 5px;"/>
+            </div>
+            <div class="col-md-2">
+                <p class="green-text">Tues: </p>
+                <input type="checkbox" id="tuesCheck" style="margin-left: 5px;"/>
+            </div>
+            <div class="col-md-2">
+                <p class="green-text">Wed: </p>
+                <input type="checkbox" id="wedCheck" style="margin-left: 5px;"/>
+            </div>
+            <div class="col-md-2">
+                <p class="green-text">Thur: </p>
+                <input type="checkbox" id="thursCheck" style="margin-left: 5px;"/>
+            </div>
+            <div class="col-md-2">
+                <p class="green-text">Fri: </p>
+                <input type="checkbox" id="friCheck" style="margin-left: 5px;"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="green-text">Start Time:</div>
+        <input type="time" class="text-input" id="startTimeInput" />
+    </div>
+    <div class="col-md-1">
+        <div class="green-text">End Time:</div>
+        <input type="time" class="text-input" id="endTimeInput" />
+    </div>
+</div>
+<div class="row entry-row">
+    <input type="submit" value="Submit" id="submitBtn" class="btn-green-submit" onclick="SubmitCourse()"/>
+</div>
+<div class="green-text entry-row">* denotes required field</div>
+
+@section scripts{
+    
+    <script>
+        var majorName = '';
+
+        $(document).on('ready', function () {
+            
+        });
+
+        function ValidateForm() {
+        }
+
+        function CheckMajor() {
+            //Check if both are filled out
+            var selectedOption = jQuery.trim($("#selectedMajor option:selected").text());
+            var enteredOption = jQuery.trim($("#newMajor").val());
+
+            if (selectedOption.length == 0 && enteredOption.length == 0) {
+                //Add some error here
+                return false;
+            }
+            if (selectedOption.length > 0 && enteredOption.length > 0) {
+                //error
+                return false;
+            }
+
+            if (selectedOption.length > 0) {
+                majorName = selectedOption;
+            }
+            else {
+                majorName = enteredOption;
+            }
+
+        }
+
+        function SubmitCourse() {
+            var flag = false;
+            var majorName = '';
+            var majorId = '';
+            var newMajor = false;
+
+            if (CheckMajor() == false) {
+                return false;
+            }
+        }
+
+    </script>
+    
+    
+    }
+
+
+
+

@@ -17,12 +17,24 @@ namespace GroupaBull
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            MailMessage email = new MailMessage(new MailAddress("noreply@GroupaBull.com", "(Do Not Reply)"),
+                new MailAddress(message.Destination));
+
+            email.Subject = message.Subject;
+            email.Body = message.Body;
+
+            email.IsBodyHtml = true;
+
+            using(var mailClient = new GroupaBull.Models.GmailEmailService())
+            {
+                await mailClient.SendMailAsync(email);
+            }
         }
     }
+    
 
     public class SmsService : IIdentityMessageService
     {
