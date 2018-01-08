@@ -69,21 +69,50 @@ namespace GroupaBull.Models
             return (i >= 1 ? true : false);
         }
 
-        public bool AddMajor(string majorName, string displayName)
+        public int AddMajor(string majorName, string displayName)
         {
             StartConnection();
             SqlCommand cmd = new SqlCommand("AddNewMajor", con);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@MajorName", majorName);
-            cmd.Parameters.AddWithValue("@Courses", null);
+            cmd.Parameters.AddWithValue("@Courses", "");
             cmd.Parameters.AddWithValue("@CreatorDisplayName", displayName);
 
             con.Open();
-            int i = cmd.ExecuteNonQuery();
+            int id = (int)cmd.ExecuteScalar();
             con.Close();
 
-            return (i >= 1 ? true : false);
+            return id;
+        }
+
+        public int AddCourse(Course course, string majorName)
+        {
+            StartConnection();
+            SqlCommand cmd = new SqlCommand("AddNewCourse", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            int majorId = GetMajorId(majorName);
+
+            cmd.Parameters.AddWithValue("@MajorId", majorId);
+            
+
+            return 1;
+        }
+
+        public int GetMajorId(string majorName)
+        {
+            StartConnection();
+            SqlCommand cmd = new SqlCommand("GetMajorId", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@MajorName", majorName);
+
+            con.Open();
+            int majorId = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return majorId;
         }
 
         public List<Major> GetAllMajors()

@@ -5,9 +5,14 @@
 }
 
 <h2 class="green-header">Add a Course</h2>
+<div class="row entry-row text-danger" id="errorRow">
+    <ul>
+        
+    </ul>
+</div>
 <div class="row entry-row">
     <div class="col-md-3">
-        <div class="green-text">Select a major: *</div>
+        <div class="green-text">Select a major:</div>
         <select style="width: 100%" class="text-input" id="selectedMajor">
             <option value=""></option>
             @foreach (var item in Model)
@@ -17,7 +22,7 @@
         </select>
     </div>
     <div class="col-md-3">
-        <div class="green-text">Or add your major if doesn't appear:</div>
+        <div class="green-text">Or add a new one:</div>
         <input type="text" class="text-input" id="newMajor" />
     </div>
 </div>
@@ -37,11 +42,11 @@
     </div>
     <div class="col-md-3">
         <div class="green-text">Number: *</div>
-        <input type="text" class="text-input" placeholder="Ex: 4200" id="numberInput"/>
+        <input type="number" class="text-input" placeholder="Ex: 4200" id="numberInput"/>
     </div>
     <div class="col-md-3">
         <div class="green-text">CRN: *</div>
-        <input type="text" class="text-input" placeholder="Ex: 45122" id="crnInput" />
+        <input type="number" class="text-input" placeholder="Ex: 45122" id="crnInput" />
     </div>
 </div>
 
@@ -53,6 +58,7 @@
     <div class="col-md-3">
         <div class="green-text">Semester: *</div>
         <select class="text-input" id="semesterInput">
+            <option value=""></option>
             <option value="Fall">Fall</option>
             <option value="Spring">Spring</option>
             <option value="Summer">Summer</option>
@@ -60,22 +66,22 @@
     </div>
     <div class="col-md-3">
         <div class="green-text">Year: *</div>
-        <input type="text" class="text-input" id="yearInput" placeholder="YYYY" />
+        <input type="number" class="text-input" id="yearInput" placeholder="YYYY" />
     </div>
     <div class="col-md-3" style="margin-top: 25px;">
         <div class="green-text">
             <span style="margin-right: 5px">Online?:</span>
-            <input type="checkbox" id="onlineInput" />
+            <input type="checkbox" id="onlineInput" onclick="ToggleOnline()" />
         </div>
     </div>
 </div>
 
-<div class="row entry-row">
+<div class="row entry-row" id="nonOnlineRow">
     <div class="col-md-3">
-        <div class="green-text">Days:</div>
+        <div class="green-text" id="daysTxt">Days (check all that apply): </div>
         <div class="row">
             <div class="col-md-2">
-                <p class="green-text">Mon: </p>
+                <p class="green-text" id="monTxt">Mon: </p>
                 <input type="checkbox" id="monCheck" style="margin-left: 5px;"/>
             </div>
             <div class="col-md-2">
@@ -96,13 +102,23 @@
             </div>
         </div>
     </div>
-    <div class="col-md-1">
+    <div class="col-md-2">
         <div class="green-text">Start Time:</div>
         <input type="time" class="text-input" id="startTimeInput" />
     </div>
-    <div class="col-md-1">
+    <div class="col-md-2">
         <div class="green-text">End Time:</div>
         <input type="time" class="text-input" id="endTimeInput" />
+    </div>
+    <div class="col-md-3">
+        <div class="green-text">Campus: *</div>
+        <select class="text-input" id="campusInput">
+            <option value=""></option>
+            <option value="Tampa">Tampa</option>
+            <option value="St. Petersburg">St. Petersburg</option>
+            <option value="Sarasota-Manatee">Sarasota-Manatee</option>
+            <option value="Polytechnic">Polytechnic</option>
+        </select>
     </div>
 </div>
 <div class="row entry-row">
@@ -114,46 +130,242 @@
     
     <script>
         var majorName = '';
+        var title = '';
+        var subject = '';
+        var number = '';
+        var crn = '';
+        var instructor = '';
+        var semester = '';
+        var year = '';
+        var days = '';
+        var startTime = '';
+        var endTime = '';
+        var campus = '';
+        var online = false;
+
+        var flag = false;
+        var emptyField = false;
+        var newMajor = false;
 
         $(document).on('ready', function () {
-            
+            $("#errorRow").hide();
         });
 
-        function ValidateForm() {
+        function AssignVariables() {
+            title = jQuery.trim($("#titleInput").val().trim());
+            subject = jQuery.trim($("#subjectInput").val().trim());
+            number = jQuery.trim($("#numberInput").val().trim());
+            crn = jQuery.trim($("#crnInput").val().trim());
+            instructor = jQuery.trim($("#instructorInput").val().trim());
+            semester = jQuery.trim($("#semesterInput").val().trim());
+            year = jQuery.trim($("#yearInput").val().trim());
+            startTime = document.getElementById('startTimeInput').value;
+            endTime = document.getElementById('endTimeInput').value;
+            campus = jQuery.trim($("#campusInput").val().trim());
+            online = document.getElementById("onlineInput").checked();
+            if (!online) {
+                days = FormDays();
+            }
+            else {
+                days = "";
+            }
         }
 
+        function ValidateFields() {
+            if (CheckMajor() == false) {
+                flag = true;
+            }
+
+            if (!title) {
+                emptyField = true;
+                $("#titleInput").css('border-color', 'red');
+            }
+            if (!subject) {
+                emptyField = true;
+                $("#subjectInput").css('border-color', 'red');
+            }
+            if (!number) {
+                emptyField = true;
+                $("#numberInput").css('border-color', 'red');
+            }
+            if (!crn) {
+                emptyField = true;
+                $("#crnInput").css('border-color', 'red');
+            }
+            if (!instructor) {
+                emptyField = true;
+                $("#instructorInput").css('border-color', 'red');
+            }
+            if (!semester) {
+                emptyField = true;
+                $("#semesterInput").css('border-color', 'red');
+            }
+            if (!year) {
+                emptyField = true;
+                $("#yearInput").css('border-color', 'red');
+            }
+            if (!document.getElementById('onlineInput').checked) {
+                if (!campus) {
+                    emptyField = true;
+                    $("#campusInput").css('border-color', 'red');
+                }
+            }
+            else {
+                campus = 'Online';
+            }
+
+            if (emptyField) {
+                flag = true;
+                $("#errorRow ul").append('<li> Required field is empty.</li>');
+            }
+        }
+
+        //Check if the major is new or a pre-existing one, if pre-existing validate it is unique
         function CheckMajor() {
             //Check if both are filled out
             var selectedOption = jQuery.trim($("#selectedMajor option:selected").text());
             var enteredOption = jQuery.trim($("#newMajor").val());
 
             if (selectedOption.length == 0 && enteredOption.length == 0) {
-                //Add some error here
+                $("#errorRow ul").append('<li>A major must be selected or entered.</li>');
+                $("#selectedMajor").css('border-color', 'red');
+                $("#newMajor").css('border-color', 'red');
                 return false;
             }
             if (selectedOption.length > 0 && enteredOption.length > 0) {
-                //error
+                $("#errorRow ul").append('<li>Both major fields contain a value, only one can contain a value.</li>');
+                $("#selectedMajor").css('border-color', 'red');
+                $("#newMajor").css('border-color', 'red');
                 return false;
             }
 
             if (selectedOption.length > 0) {
                 majorName = selectedOption;
+                return true;
             }
             else {
-                majorName = enteredOption;
+                newMajor = true;
+                majorName = enteredOption
+                CheckUniqueMajor(majorName);
+                return true;
             }
+        }
 
+        function CheckUniqueMajor(majorName) {
+            $.ajax({
+                type: "POST",
+                url: "/NewCourse/VerifyUniqueMajor",
+                data: '{ majorName: "' +  majorName  + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response === false) {
+                        flag = true;
+                        $("#errorRow ul").append('<li>Entered major already exists.</li>');
+                        $("#newMajor").css('border-color', 'red');
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
         }
 
         function SubmitCourse() {
-            var flag = false;
-            var majorName = '';
-            var majorId = '';
-            var newMajor = false;
+            flag = false;
+            emptyField = false;
+            newMajor = false;
+            $('ul').empty();
 
-            if (CheckMajor() == false) {
+            ResetBorders();
+            AssignVariables();
+            ValidateFields();
+
+            alert(newMajor);
+
+            if (flag == true) {
+                $("#errorRow").show();
                 return false;
             }
+
+            $.ajax({
+                type: "POST",
+                url: "/NewCourse/AddMajor",
+                data: '{ majorName: "' + majorName + '", title: "' + title + '", subject: "' + subject + '", number: "' + number + '", ' +  
+                ' crn: "' + crn + '", instructor: "' + instructor + '", semester: "' + semester + '", year: "' + year + '", days: "' + days + '", ' +
+                ' startTime: "' + startTime + '", endTime: "' + endTime + '", campus: "' + campus + '", newMajor: "' + newMajor + '", online: "' + online + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                },
+                error: function (response) {
+                    
+                }
+            });
+        }
+
+        function ResetBorders() {
+            $("#selectedMajor").css('border-color', '');
+            $("#newMajor").css('border-color', '');
+            $("#titleInput").css('border-color', '');
+            $("#subjectInput").css('border-color', '');
+            $("#numberInput").css('border-color', '');
+            $("#crnInput").css('border-color', '');
+            $("#instructorInput").css('border-color', '');
+            $("#semesterInput").css('border-color', '');
+            $("#yearInput").css('border-color', '');
+            $("#campusInput").css('border-color', '');
+        }
+
+        //Disable any fields that are irrelevant if the course is online only
+        function ToggleOnline() {
+            if (document.getElementById('onlineInput').checked) {
+                $("#monCheck").prop('disabled', true);
+                $("#tuesCheck").prop('disabled', true);
+                $("#wedCheck").prop('disabled', true);
+                $("#thursCheck").prop('disabled', true);
+                $("#friCheck").prop('disabled', true);
+                $("#startTimeInput").prop('disabled', true);
+                $("#endTimeInput").prop('disabled', true);
+                $("#campusInput").prop('disabled', true);
+
+                $("#nonOnlineRow").hide();
+            }
+            else {
+                $("#monCheck").prop('disabled', false);
+                $("#tuesCheck").prop('disabled', false);
+                $("#wedCheck").prop('disabled', false);
+                $("#thursCheck").prop('disabled', false);
+                $("#friCheck").prop('disabled', false);
+                $("#startTimeInput").prop('disabled', false);
+                $("#endTimeInput").prop('disabled', false);
+                $("#campusInput").prop('disabled', false);
+
+                $("#nonOnlineRow").show();
+            }
+        }
+
+        function FormDays() {
+            var tempDays = '';
+            if (document.getElementById('monCheck').checked) {
+                tempDays = 'Mon/';
+            }
+            if (document.getElementById('tuesCheck').checked) {
+                tempDays += 'Tues/'
+            }
+            if (document.getElementById('wedCheck').checked) {
+                tempDays += 'Wed/'
+            }
+            if (document.getElementById('thursCheck').checked) {
+                tempDays += 'Thurs/';
+            }
+            if (document.getElementById('friCheck').checked) {
+                tempDays += 'Fri/';
+            }
+            //Trim off the last / so that we don't have to validate if that checkbox is the last one checked'
+            tempDays = tempDays.substring(0, tempDays.length - 1);
+            return tempDays;
         }
 
     </script>

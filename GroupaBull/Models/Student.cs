@@ -9,5 +9,10 @@ namespace GroupaBull.Models
     {
         public int StudentId { get; set; }
         public string DisplayName { get; set; }
+        public string Courses { get; set; }
+        public string Meetups { get; set; }
+
+        public List<Course> CourseList { get; set; }
+        public List<Meetup> MeetupList { get; set; }
     }
 }
