@@ -33,5 +33,7 @@ namespace GroupaBull.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<GroupaBull.Models.Course> Courses { get; set; }
     }
 }

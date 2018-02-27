@@ -1,0 +1,39 @@
+﻿@model GroupaBull.Models.Course
+
+<h2></h2>
+<div class="white-background">
+    <p>
+        Are you currently registered for this class? Click <a id="joinCourse" onclick="JoinCourse()">here</a> to join this group with @Html.Raw(Model.Members) other members
+        and start finding study meetups.
+    </p>
+    <div class="row entry-row text-danger" id="errorRow">
+        <ul></ul>
+    </div>
+    <div class="row entry-row text-success" id="successRow">
+        <ul></ul>
+    </div>
+</div>
+
+
+
+@section scripts{
+<script>
+    $(document).on('ready', function () {
+        $("#errorRow").hide();
+        $("#successRow").hide();
+    });
+
+    function JoinCourse(){
+        var userLoggedIn = @User.Identity.IsAuthenticated.ToString().ToLower();
+        if (userLoggedIn) {
+            //Add code here to actually create course entry to Enrollments
+            $("#successRow ul").append('<li> You have been added to this course! You can now start and join meetups for @Html.Raw(Model.CourseSubject) @Html.Raw(Model.SectionNumber) -  @Html.Raw(Model.Title)</li>');
+            $('#successRow').show();
+        }
+        else {
+            $("#errorRow ul").append('<li> Looks like you are not signed in. Please sign in or register to start joining courses and viewing meetups.</li>');
+            $('#errorRow').show();
+        }
+    }
+</script>
+}

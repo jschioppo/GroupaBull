@@ -8,7 +8,7 @@
     <h2>Courses</h2>
 
     <p>
-        <strong>Don't see your class or major? Add it @Html.ActionLink("here", "Index", "NewCourse", null, null)</strong>
+        <strong>Don't see your class or major? Add it @Html.ActionLink("here", "AddCourse", "NewCourse", null, null)</strong>
     </p>
     <div id="accordion">
         @foreach (var item in Model)
@@ -19,7 +19,7 @@
             <div>
                 @foreach (var course in item.CourseList)
                 {
-                    <div class="accordion-item" onclick="JoinGroup('@course.CourseId')">
+                    <div class="accordion-item" onclick="ViewCourse('@course.CourseId')">
                         @Html.DisplayFor(modelItem => course.Title) -
                         @Html.DisplayFor(modelItem => course.CourseSubject) @Html.DisplayFor(modelItem => course.CRN) -
                         Sect. @Html.DisplayFor(modelItem => course.SectionNumber) | 
@@ -52,26 +52,8 @@
             });
         });
 
-        function AddClass() {
-            courseModal.style.display = "block";
-        }
-
-        function AddMajor() {
-            majorModal.style.display = "block";
-        }
-
-        function closeModal() {
-            courseModal.style.display = "none";
-            majorModal.style.display = "none";
-        }
-
-        function JoinGroup(name) {
-            alert(name);
-        }
-
-        function SubmitMajor() {
-            var majorName = $('#NewMajor').val();
-            
+        function ViewCourse(id) {
+            window.location.href = "../CourseList/ViewCourse?CourseId=" + id;
         }
     </script>
 }

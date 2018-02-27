@@ -14,24 +14,14 @@ namespace GroupaBull.Controllers
         // GET: NewCourse
         public ActionResult Index()
         {
+            return View();
+        }
+
+        public ActionResult AddCourse()
+        {
             CourseDBHandler dbHandler = new CourseDBHandler();
-            //Major major1 = new Major();
-            //major1.MajorId = 1;
-            //major1.MajorName = "Twelve";
-            //majors.Add(major1);
 
-            //Major major2 = new Major();
-            //major2.MajorId = 2;
-            //major2.MajorName = "Thirteen";
-            //majors.Add(major2);
-
-            //Major major3 = new Major();
-            //major3.MajorId = 3;
-            //major3.MajorName = "Fourteen";
-            //majors.Add(major3);
-
-
-
+            //Sends all majors to populate the dropdown
             return View(dbHandler.GetAllMajors());
         }
 
@@ -72,6 +62,7 @@ namespace GroupaBull.Controllers
                 end = TimeSpan.Zero;
             }
             Debug.WriteLine("New: " + newMajor);
+
             if (newMajor)
             {
                 majorId = handler.AddMajor(majorName, User.Identity.GetDisplayname());
@@ -100,9 +91,11 @@ namespace GroupaBull.Controllers
                 CreatorDisplayName = User.Identity.GetDisplayname()
             };
 
-            handler.AddCourse(newCourse, majorName);
-            //Not yet tested
-            return Json(newCourse);
+            if(handler.AddCourse(newCourse, majorName))
+            {
+                return Json(true);
+            }
+            return Json(false);
         }
     }
 }

@@ -20,19 +20,38 @@ namespace GroupaBull.Controllers
             return View();
         }
 
-        [Authorize]
+        
         public ActionResult ListMajors()
         {
             List<Major> majors = new List<Major>();
+            CourseDBHandler handler = new CourseDBHandler();
+
+            majors = handler.GetAllMajors();
             
-
             return View(majors);
-
-
         }
 
         [HttpPost]
-        public void JoinCourse(string course)
+        public ActionResult GetCourse(int courseId)
+        {
+            CourseDBHandler handler = new CourseDBHandler();
+            Course targetCourse = handler.GetCourse(courseId);
+            Debug.WriteLine(targetCourse.CourseId);
+            Debug.WriteLine(targetCourse.Title);
+            return RedirectToAction("ViewCourse", targetCourse);
+        }
+
+        public ActionResult ViewCourse(int courseId)
+        {
+            CourseDBHandler handler = new CourseDBHandler();
+            Course targetCourse = handler.GetCourse(courseId);
+            Debug.WriteLine(targetCourse.CourseId);
+            Debug.WriteLine(targetCourse.Title);
+            return View(targetCourse);
+        }
+
+        [HttpPost]
+        public void JoinCourse(int courseId)
         {
 
             ListMajors();

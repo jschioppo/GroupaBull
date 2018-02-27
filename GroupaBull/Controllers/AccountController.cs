@@ -88,7 +88,7 @@ namespace GroupaBull.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Invalid login attempt. Email or Password may be invalid.");
                     return View(model);
             }
         }

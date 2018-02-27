@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GroupaBull.Models.Major>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "AddCourse";
 }
 
 <h2 class="green-header">Add a Course</h2>
@@ -162,7 +162,7 @@
             startTime = document.getElementById('startTimeInput').value;
             endTime = document.getElementById('endTimeInput').value;
             campus = jQuery.trim($("#campusInput").val().trim());
-            online = document.getElementById("onlineInput").checked();
+            online = document.getElementById("onlineInput").checked;
             if (!online) {
                 days = FormDays();
             }
@@ -281,8 +281,6 @@
             AssignVariables();
             ValidateFields();
 
-            alert(newMajor);
-
             if (flag == true) {
                 $("#errorRow").show();
                 return false;
@@ -297,10 +295,10 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-
+                    alert("Success");
                 },
                 error: function (response) {
-                    
+                    alert("Fail");
                 }
             });
         }
