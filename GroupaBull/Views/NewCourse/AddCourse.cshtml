@@ -128,7 +128,7 @@
 
 @section scripts{
     
-    <script>
+<script>
         var majorName = '';
         var title = '';
         var subject = '';
@@ -277,6 +277,12 @@
             newMajor = false;
             $('ul').empty();
 
+            var userLoggedIn = @User.Identity.IsAuthenticated.ToString().ToLower();
+            if (!userLoggedIn) {
+                $("#errorRow ul").append('<li>Looks like you are not signed in. Please sign in or register to create a course group.</li>');
+                flag = true;
+            }
+
             ResetBorders();
             AssignVariables();
             ValidateFields();
@@ -289,16 +295,16 @@
             $.ajax({
                 type: "POST",
                 url: "/NewCourse/AddMajor",
-                data: '{ majorName: "' + majorName + '", title: "' + title + '", subject: "' + subject + '", number: "' + number + '", ' +  
+                data: '{ majorName: "' + majorName + '", title: "' + title + '", subject: "' + subject + '", number: "' + number + '", ' +
                 ' crn: "' + crn + '", instructor: "' + instructor + '", semester: "' + semester + '", year: "' + year + '", days: "' + days + '", ' +
                 ' startTime: "' + startTime + '", endTime: "' + endTime + '", campus: "' + campus + '", newMajor: "' + newMajor + '", online: "' + online + '"}',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    alert("Success");
+                    window.location.href = "../CourseList/ListMajors";
                 },
                 error: function (response) {
-                    alert("Fail");
+                    
                 }
             });
         }
@@ -366,7 +372,7 @@
             return tempDays;
         }
 
-    </script>
+</script>
     
     
     }
