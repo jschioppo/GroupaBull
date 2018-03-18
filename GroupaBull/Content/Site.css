@@ -45,7 +45,7 @@ body {
 .accordion-item {
     background-color: #f2f1ed;
     color: #006747;
-    padding: 8px;
+    padding: 4px;
     /*box-shadow: -1px 1px #d8cea0, -2px 2px #d8cea0, -3px 3px #d8cea0, -4px 4px #d8cea0, -5px 5px #d8cea0;*/
     font-weight: bold;
     font-size: 14px;

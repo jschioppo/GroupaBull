@@ -31,6 +31,7 @@ namespace GroupaBull.Models
 
             con.Open();
             var unique = (int)cmd.ExecuteScalar();
+            con.Close();
 
             return (unique >= 1 ? false : true);
         }
@@ -45,6 +46,7 @@ namespace GroupaBull.Models
 
             con.Open();
             var unique = (int)cmd.ExecuteScalar();
+            con.Close();
 
             return (unique >= 1 ? false : true);
         }
@@ -91,15 +93,11 @@ namespace GroupaBull.Models
             cmd.Parameters.AddWithValue("@Title", course.Title);
             cmd.Parameters.AddWithValue("@Instructor", course.Instructor);
             cmd.Parameters.AddWithValue("@CourseSubject", course.CourseSubject);
-            cmd.Parameters.AddWithValue("@CRN", course.CRN);
+            cmd.Parameters.AddWithValue("@SubjectNumber", course.SubjectNumber);
             cmd.Parameters.AddWithValue("@SectionNumber", course.SectionNumber);
             cmd.Parameters.AddWithValue("@Semester", course.Semester);
             cmd.Parameters.AddWithValue("@SchoolYear", course.SchoolYear);
-            cmd.Parameters.AddWithValue("@Day", course.Day);
             cmd.Parameters.AddWithValue("@Members", 0);
-            cmd.Parameters.AddWithValue("@Online", Convert.ToInt32(course.Online));
-            cmd.Parameters.AddWithValue("@StartTime", course.StartTime.Ticks);
-            cmd.Parameters.AddWithValue("@EndTime", course.EndTime.Ticks);
             cmd.Parameters.AddWithValue("@Campus", course.Campus);
             cmd.Parameters.AddWithValue("@CreatorDisplayName", course.CreatorDisplayName);
 
@@ -179,15 +177,11 @@ namespace GroupaBull.Models
                         Title = Convert.ToString(dr["Title"]),
                         Instructor = Convert.ToString(dr["Instructor"]),
                         CourseSubject = Convert.ToString(dr["CourseSubject"]),
-                        CRN = Convert.ToInt32(dr["CRN"]),
+                        SubjectNumber = Convert.ToInt32(dr["SubjectNumber"]),
                         SectionNumber = Convert.ToInt32(dr["SectionNumber"]),
                         Semester = Convert.ToString(dr["Semester"]),
                         SchoolYear = Convert.ToInt32(dr["SchoolYear"]),
-                        Day = Convert.ToString(dr["Day"]),
                         Members = Convert.ToInt32(dr["Members"]),
-                        Online = Convert.ToBoolean(dr["Online"]),
-                        StartTime = TimeSpan.FromTicks(Convert.ToInt32(dr["StartTime"])),
-                        EndTime = TimeSpan.FromTicks(Convert.ToInt32(dr["EndTime"])),
                         CreatorDisplayName = Convert.ToString(dr["CreatorDisplayName"])
                     });
             }
@@ -218,19 +212,72 @@ namespace GroupaBull.Models
                 target.Title = Convert.ToString(dr["Title"]);
                 target.Instructor = Convert.ToString(dr["Instructor"]);
                 target.CourseSubject = Convert.ToString(dr["CourseSubject"]);
-                target.CRN = Convert.ToInt32(dr["CRN"]);
                 target.SectionNumber = Convert.ToInt32(dr["SectionNumber"]);
+                target.SubjectNumber = Convert.ToInt32(dr["SubjectNumber"]);
                 target.Semester = Convert.ToString(dr["Semester"]);
                 target.SchoolYear = Convert.ToInt32(dr["SchoolYear"]);
-                target.Day = Convert.ToString(dr["Day"]);
                 target.Members = Convert.ToInt32(dr["Members"]);
-                target.Online = Convert.ToBoolean(dr["Online"]);
-                target.StartTime = TimeSpan.FromTicks(Convert.ToInt32(dr["StartTime"]));
-                target.EndTime = TimeSpan.FromTicks(Convert.ToInt32(dr["EndTime"]));
                 target.CreatorDisplayName = Convert.ToString(dr["CreatorDisplayName"]);
             }
-            //Debug.WriteLine("---------------------------------------------" + target.CourseId);
             return target;
+        }
+
+        public int GetStudentId()
+        {
+            StartConnection();
+            string displayName = HttpContext.Current.User.Identity.GetDisplayname();
+
+            SqlCommand cmd = new SqlCommand("GetStudentId", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@DisplayName", displayName);
+
+            con.Open();
+            int studentId = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return studentId;
+        }
+
+        public bool AddEnrollment(int courseId)
+        {
+            int studentId = GetStudentId();
+            if(CheckUniqueEnrollment(courseId) == false)
+            {
+                Debug.WriteLine("Test");
+                return false;
+            }
+            StartConnection();
+
+            SqlCommand cmd = new SqlCommand("AddNewEnrollment", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@StudentId", studentId);
+            cmd.Parameters.AddWithValue("@CourseId", courseId);
+
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+
+            return (i >= 1 ? true : false);
+        }
+
+        public bool CheckUniqueEnrollment(int courseId)
+        {
+            int studentId = GetStudentId();
+            StartConnection();
+
+            SqlCommand cmd = new SqlCommand("VerifyUniqueEnrollment", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@StudentId", studentId);
+            cmd.Parameters.AddWithValue("@CourseId", courseId);
+
+            con.Open();
+            var unique = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return (unique >= 1 ? false : true);
         }
 
         

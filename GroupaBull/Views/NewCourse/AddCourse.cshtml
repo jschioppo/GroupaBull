@@ -6,7 +6,7 @@
 
 <h2 class="green-header">Add a Course</h2>
 <div class="row entry-row text-danger" id="errorRow">
-    <ul>
+    <ul id="errors">
         
     </ul>
 </div>
@@ -18,7 +18,7 @@
             @foreach (var item in Model)
             {
                 <option value="@item.MajorId">@item.MajorName</option>
-            }
+                }
         </select>
     </div>
     <div class="col-md-3">
@@ -41,12 +41,12 @@
         <input type="text" class="text-input" placeholder="Ex: COP" id="subjectInput"/>
     </div>
     <div class="col-md-3">
-        <div class="green-text">Number: *</div>
+        <div class="green-text">Subject Number: *</div>
         <input type="number" class="text-input" placeholder="Ex: 4200" id="numberInput"/>
     </div>
     <div class="col-md-3">
-        <div class="green-text">CRN: *</div>
-        <input type="number" class="text-input" placeholder="Ex: 45122" id="crnInput" />
+        <div class="green-text">Section Number: *</div>
+        <input type="number" class="text-input" placeholder="Ex: 001" id="sectInput" />
     </div>
 </div>
 
@@ -68,48 +68,6 @@
         <div class="green-text">Year: *</div>
         <input type="number" class="text-input" id="yearInput" placeholder="YYYY" />
     </div>
-    <div class="col-md-3" style="margin-top: 25px;">
-        <div class="green-text">
-            <span style="margin-right: 5px">Online?:</span>
-            <input type="checkbox" id="onlineInput" onclick="ToggleOnline()" />
-        </div>
-    </div>
-</div>
-
-<div class="row entry-row" id="nonOnlineRow">
-    <div class="col-md-3">
-        <div class="green-text" id="daysTxt">Days (check all that apply): </div>
-        <div class="row">
-            <div class="col-md-2">
-                <p class="green-text" id="monTxt">Mon: </p>
-                <input type="checkbox" id="monCheck" style="margin-left: 5px;"/>
-            </div>
-            <div class="col-md-2">
-                <p class="green-text">Tues: </p>
-                <input type="checkbox" id="tuesCheck" style="margin-left: 5px;"/>
-            </div>
-            <div class="col-md-2">
-                <p class="green-text">Wed: </p>
-                <input type="checkbox" id="wedCheck" style="margin-left: 5px;"/>
-            </div>
-            <div class="col-md-2">
-                <p class="green-text">Thur: </p>
-                <input type="checkbox" id="thursCheck" style="margin-left: 5px;"/>
-            </div>
-            <div class="col-md-2">
-                <p class="green-text">Fri: </p>
-                <input type="checkbox" id="friCheck" style="margin-left: 5px;"/>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="green-text">Start Time:</div>
-        <input type="time" class="text-input" id="startTimeInput" />
-    </div>
-    <div class="col-md-2">
-        <div class="green-text">End Time:</div>
-        <input type="time" class="text-input" id="endTimeInput" />
-    </div>
     <div class="col-md-3">
         <div class="green-text">Campus: *</div>
         <select class="text-input" id="campusInput">
@@ -118,9 +76,11 @@
             <option value="St. Petersburg">St. Petersburg</option>
             <option value="Sarasota-Manatee">Sarasota-Manatee</option>
             <option value="Polytechnic">Polytechnic</option>
+            <option value="Online">Online</option>
         </select>
     </div>
 </div>
+
 <div class="row entry-row">
     <input type="submit" value="Submit" id="submitBtn" class="btn-green-submit" onclick="SubmitCourse()"/>
 </div>
@@ -133,15 +93,11 @@
         var title = '';
         var subject = '';
         var number = '';
-        var crn = '';
+        var sectNumber = '';
         var instructor = '';
         var semester = '';
         var year = '';
-        var days = '';
-        var startTime = '';
-        var endTime = '';
         var campus = '';
-        var online = false;
 
         var flag = false;
         var emptyField = false;
@@ -155,20 +111,11 @@
             title = jQuery.trim($("#titleInput").val().trim());
             subject = jQuery.trim($("#subjectInput").val().trim());
             number = jQuery.trim($("#numberInput").val().trim());
-            crn = jQuery.trim($("#crnInput").val().trim());
+            sectNumber = jQuery.trim($("#sectInput").val().trim());
             instructor = jQuery.trim($("#instructorInput").val().trim());
             semester = jQuery.trim($("#semesterInput").val().trim());
             year = jQuery.trim($("#yearInput").val().trim());
-            startTime = document.getElementById('startTimeInput').value;
-            endTime = document.getElementById('endTimeInput').value;
             campus = jQuery.trim($("#campusInput").val().trim());
-            online = document.getElementById("onlineInput").checked;
-            if (!online) {
-                days = FormDays();
-            }
-            else {
-                days = "";
-            }
         }
 
         function ValidateFields() {
@@ -188,9 +135,9 @@
                 emptyField = true;
                 $("#numberInput").css('border-color', 'red');
             }
-            if (!crn) {
+            if (!sectNumber) {
                 emptyField = true;
-                $("#crnInput").css('border-color', 'red');
+                $("#sectInput").css('border-color', 'red');
             }
             if (!instructor) {
                 emptyField = true;
@@ -203,15 +150,6 @@
             if (!year) {
                 emptyField = true;
                 $("#yearInput").css('border-color', 'red');
-            }
-            if (!document.getElementById('onlineInput').checked) {
-                if (!campus) {
-                    emptyField = true;
-                    $("#campusInput").css('border-color', 'red');
-                }
-            }
-            else {
-                campus = 'Online';
             }
 
             if (emptyField) {
@@ -275,7 +213,7 @@
             flag = false;
             emptyField = false;
             newMajor = false;
-            $('ul').empty();
+            $('#errors').empty();
 
             var userLoggedIn = @User.Identity.IsAuthenticated.ToString().ToLower();
             if (!userLoggedIn) {
@@ -296,8 +234,7 @@
                 type: "POST",
                 url: "/NewCourse/AddMajor",
                 data: '{ majorName: "' + majorName + '", title: "' + title + '", subject: "' + subject + '", number: "' + number + '", ' +
-                ' crn: "' + crn + '", instructor: "' + instructor + '", semester: "' + semester + '", year: "' + year + '", days: "' + days + '", ' +
-                ' startTime: "' + startTime + '", endTime: "' + endTime + '", campus: "' + campus + '", newMajor: "' + newMajor + '", online: "' + online + '"}',
+                ' sectNumber: "' + sectNumber + '", instructor: "' + instructor + '", semester: "' + semester + '", year: "' + year + '", campus: "' + campus + '", newMajor: "' + newMajor + '"}',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -315,61 +252,11 @@
             $("#titleInput").css('border-color', '');
             $("#subjectInput").css('border-color', '');
             $("#numberInput").css('border-color', '');
-            $("#crnInput").css('border-color', '');
+            $("#sectInput").css('border-color', '');
             $("#instructorInput").css('border-color', '');
             $("#semesterInput").css('border-color', '');
             $("#yearInput").css('border-color', '');
             $("#campusInput").css('border-color', '');
-        }
-
-        //Disable any fields that are irrelevant if the course is online only
-        function ToggleOnline() {
-            if (document.getElementById('onlineInput').checked) {
-                $("#monCheck").prop('disabled', true);
-                $("#tuesCheck").prop('disabled', true);
-                $("#wedCheck").prop('disabled', true);
-                $("#thursCheck").prop('disabled', true);
-                $("#friCheck").prop('disabled', true);
-                $("#startTimeInput").prop('disabled', true);
-                $("#endTimeInput").prop('disabled', true);
-                $("#campusInput").prop('disabled', true);
-
-                $("#nonOnlineRow").hide();
-            }
-            else {
-                $("#monCheck").prop('disabled', false);
-                $("#tuesCheck").prop('disabled', false);
-                $("#wedCheck").prop('disabled', false);
-                $("#thursCheck").prop('disabled', false);
-                $("#friCheck").prop('disabled', false);
-                $("#startTimeInput").prop('disabled', false);
-                $("#endTimeInput").prop('disabled', false);
-                $("#campusInput").prop('disabled', false);
-
-                $("#nonOnlineRow").show();
-            }
-        }
-
-        function FormDays() {
-            var tempDays = '';
-            if (document.getElementById('monCheck').checked) {
-                tempDays = 'Mon/';
-            }
-            if (document.getElementById('tuesCheck').checked) {
-                tempDays += 'Tues/'
-            }
-            if (document.getElementById('wedCheck').checked) {
-                tempDays += 'Wed/'
-            }
-            if (document.getElementById('thursCheck').checked) {
-                tempDays += 'Thurs/';
-            }
-            if (document.getElementById('friCheck').checked) {
-                tempDays += 'Fri/';
-            }
-            //Trim off the last / so that we don't have to validate if that checkbox is the last one checked'
-            tempDays = tempDays.substring(0, tempDays.length - 1);
-            return tempDays;
         }
 
 </script>

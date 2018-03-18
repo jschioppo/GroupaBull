@@ -10,33 +10,34 @@
     <p>
         <strong>Don't see your class or major? Add it @Html.ActionLink("here", "AddCourse", "NewCourse", null, null)</strong>
     </p>
+    <p>
+        <label id="confirmJoin"></label>
+    </p>
     <div id="accordion">
         @foreach (var item in Model)
+    {
+        <h3 class="accordion-header">
+            @Html.DisplayFor(modelItem => item.MajorName)
+        </h3>
+        <div>
+            @foreach (var course in item.CourseList)
         {
-            <h3 class="accordion-header">
-                @Html.DisplayFor(modelItem => item.MajorName)
-            </h3>
-            <div>
-                @foreach (var course in item.CourseList)
-                {
-                    <div class="accordion-item" onclick="ViewCourse('@course.CourseId')">
-                        @Html.DisplayFor(modelItem => course.Title) -
-                        @Html.DisplayFor(modelItem => course.CourseSubject) @Html.DisplayFor(modelItem => course.CRN) -
-                        Sect. @Html.DisplayFor(modelItem => course.SectionNumber) | 
-                        @Html.DisplayFor(modelItem => course.Instructor) - @Html.DisplayFor(modelItem => course.Semester) 
-                        @Html.DisplayFor(modelItem => course.SchoolYear) |  
-                        @Html.DisplayFor(modelItem => course.Day)  
-                        @Html.DisplayFor(modelItem => course.StartHour):@Html.DisplayFor(modelItem => course.StartMinute) @Html.DisplayFor(modelItem => course.AMPM) - 
-                        @Html.DisplayFor(modelItem => course.EndHour):@Html.DisplayFor(modelItem => course.EndMinute) @Html.DisplayFor(modelItem => course.AMPM) | 
-                        @Html.DisplayFor(modelItem => course.Members) Members
-                        <div style="margin-top: 5px;">
-                            
-                        </div>
-                    </div>
-                }
+            <div class="accordion-item">
+                @Html.DisplayFor(modelItem => course.Title) -
+                @Html.DisplayFor(modelItem => course.CourseSubject) @Html.DisplayFor(modelItem => course.SubjectNumber) -
+                Sect. @Html.DisplayFor(modelItem => course.SectionNumber) |
+                @Html.DisplayFor(modelItem => course.Instructor) - @Html.DisplayFor(modelItem => course.Semester)
+                @Html.DisplayFor(modelItem => course.SchoolYear) |
+                @Html.DisplayFor(modelItem => course.Members) Members
+                <a style="margin-left: 5px;" onclick="JoinCourse('@course.CourseId', '@course.Title')">Join</a>
+                <div style="margin-top: 5px;">
+                    
+                </div>
             </div>
+    }
+        </div>
 
-        }
+}
     </div>
     
 </div>
@@ -48,12 +49,39 @@
         $(document).on('ready', function () {
             $("#accordion").accordion({
                 active: false,
-                collapsible: true
+                collapsible: true,
+                heightStyle: "content"
             });
+            $('#confirmJoin').hide();
         });
 
-        function ViewCourse(id) {
-            window.location.href = "../CourseList/ViewCourse?CourseId=" + id;
+        function JoinCourse(id, title) {
+            $.ajax({
+                type: "POST",
+                url: "/CourseList/JoinCourse",
+                data: '{ courseId: "' + id + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response === true) {
+                        document.getElementById('confirmJoin').innerHTML = 'You are now a member of ' + title;
+                        document.getElementById('confirmJoin').classList.remove('text-danger');
+                        document.getElementById('confirmJoin').classList.add('green-text');
+                        $('#confirmJoin').show();
+                    }
+                    else {
+                        document.getElementById('confirmJoin').innerHTML = 'There was an error joining ' + title + ', ensure you are not already enrolled in this course.';
+                        document.getElementById('confirmJoin').classList.add('text-danger');
+                        document.getElementById('confirmJoin').classList.remove('green-text');
+                        $('#confirmJoin').show();
+                    }
+                },
+                error: function (response) {
+                    
+                }
+            });
+
+            
         }
     </script>
 }

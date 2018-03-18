@@ -36,32 +36,11 @@ namespace GroupaBull.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddMajor(string majorName, string title, string subject, int number, int crn, string instructor,
-            string semester, int year, string days, string startTime, string endTime, string campus, bool newMajor, bool online)
+        public JsonResult AddMajor(string majorName, string title, string subject, int number, int sectNumber, string instructor,
+            string semester, int year, string campus, bool newMajor)
         {
             CourseDBHandler handler = new CourseDBHandler();
-            TimeSpan start;
-            TimeSpan end;
             int majorId;
-
-            if (!string.IsNullOrEmpty(startTime))
-            {
-                start = TimeSpan.Parse(startTime);
-            }
-            else
-            {
-                start = TimeSpan.Zero;
-            }
-
-            if (!string.IsNullOrEmpty(endTime))
-            {
-                end = TimeSpan.Parse(endTime);
-            }
-            else
-            {
-                end = TimeSpan.Zero;
-            }
-            Debug.WriteLine("New: " + newMajor);
 
             if (newMajor)
             {
@@ -78,15 +57,11 @@ namespace GroupaBull.Controllers
                 Title = title,
                 Instructor = instructor,
                 CourseSubject = subject,
-                CRN = crn,
-                SectionNumber = number,
+                SectionNumber = sectNumber,
+                SubjectNumber = number,
                 Semester = semester,
                 SchoolYear = year,
-                Day = days,
-                StartTime = start,
-                EndTime = end,
                 Members = 0,
-                Online = online,
                 Campus = campus,
                 CreatorDisplayName = User.Identity.GetDisplayname()
             };

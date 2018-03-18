@@ -36,8 +36,6 @@ namespace GroupaBull.Controllers
         {
             CourseDBHandler handler = new CourseDBHandler();
             Course targetCourse = handler.GetCourse(courseId);
-            Debug.WriteLine(targetCourse.CourseId);
-            Debug.WriteLine(targetCourse.Title);
             return RedirectToAction("ViewCourse", targetCourse);
         }
 
@@ -45,18 +43,16 @@ namespace GroupaBull.Controllers
         {
             CourseDBHandler handler = new CourseDBHandler();
             Course targetCourse = handler.GetCourse(courseId);
-            Debug.WriteLine(targetCourse.CourseId);
-            Debug.WriteLine(targetCourse.Title);
             return View(targetCourse);
         }
 
         [HttpPost]
-        public void JoinCourse(int courseId)
+        public JsonResult JoinCourse(int courseId)
         {
-
-            ListMajors();
+            CourseDBHandler handler = new CourseDBHandler();
+            bool success = handler.AddEnrollment(courseId);
+            return Json(success);
         }
-
 
     }
 }
